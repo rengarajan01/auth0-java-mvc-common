@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.github.javaparser:javaparser-core:3.25.10'
+    implementation 'com.google.code.gson:gson:2.10.1'
+}
+
+application {
+    mainClass = 'com.auth0.docs.DocGenerator'
+}
+
+def sdkVersion = {
+    if (project.hasProperty('sdkVersion')) return project.property('sdkVersion')
+    def versionFile = file("${rootDir}/../.version")
+    if (versionFile.exists()) return versionFile.text.trim()
+    return 'unspecified'
+}()
+
+/**
+ * Generates the SDK API reference JSON from the main project's Java source files.
+ *
+ * Outputs to: build/sdk-docs/auth0-java-mvc-common/v{major}.json
+ *
+ * Usage:
+ *   ./gradlew :doc-generator:generateDocs
+ *   ./gradlew :doc-generator:generateDocs -PsdkVersion=1.12.0
+ */
+task generateDocs(type: JavaExec, dependsOn: classes) {
+    group = 'documentation'
+    description = 'Generates SDK API reference JSON from Javadoc comments'
+
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.auth0.docs.DocGenerator'
+
+    def sourceDir  = "${rootDir}/../src/main/java"
+    def majorVersion = "v${sdkVersion.toString().split('\\.')[0]}"
+    def outputFile = "${buildDir}/sdk-docs/auth0-java-mvc-common/${majorVersion}.json"
+
+    args = [
+        sourceDir,
+        outputFile,
+        sdkVersion.toString(),
+        'com.auth0',
+        'com.auth0:mvc-auth-commons'
+    ]
+
+    doFirst {
+        logger.lifecycle("Generating SDK docs for version ${sdkVersion} → ${outputFile}")
+    }
+    doLast {
+        logger.lifecycle("Done. Copy ${outputFile} to your docs repo under sdk-data/auth0-java-mvc-common/${majorVersion}.json")
+    }
+}

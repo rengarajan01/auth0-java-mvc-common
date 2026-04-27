@@ -27,6 +27,9 @@ public abstract class SessionUtils {
      * @param req   a valid request to get the session from
      * @param name  the name of the attribute
      * @param value the value to set
+     * @example Store a value in the session after authentication
+     * Tokens tokens = controller.handle(request, response);
+     * SessionUtils.set(request, "accessToken", tokens.getAccessToken());
      */
     public static void set(HttpServletRequest req, String name, Object value) {
         Validate.notNull(req);
@@ -40,6 +43,8 @@ public abstract class SessionUtils {
      * @param req  a valid request to get the session from
      * @param name the name of the attribute
      * @return the attribute stored in the session or null if it doesn't exists
+     * @example Retrieve a stored value from the session
+     * String accessToken = (String) SessionUtils.get(request, "accessToken");
      */
     public static Object get(HttpServletRequest req, String name) {
         Validate.notNull(req);
@@ -53,6 +58,8 @@ public abstract class SessionUtils {
      * @param req  a valid request to get the session from
      * @param name the name of the attribute
      * @return the attribute stored in the session or null if it doesn't exists
+     * @example Remove a value from the session (e.g. on logout)
+     * String accessToken = (String) SessionUtils.remove(request, "accessToken");
      */
     public static Object remove(HttpServletRequest req, String name) {
         Validate.notNull(req);

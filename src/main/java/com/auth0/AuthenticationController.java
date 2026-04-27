@@ -13,6 +13,17 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Base Auth0 Authenticator class.
  * Allows to easily authenticate using the Auth0 Hosted Login Page.
+ *
+ * @example Create and use an AuthenticationController
+ * AuthenticationController controller = AuthenticationController
+ *     .newBuilder("YOUR_DOMAIN.auth0.com", "YOUR_CLIENT_ID", "YOUR_CLIENT_SECRET")
+ *     .build();
+ *
+ * // Build the authorization URL and redirect the user
+ * String authorizeUrl = controller
+ *     .buildAuthorizeUrl(request, response, "https://your-app.com/callback")
+ *     .build();
+ * response.sendRedirect(authorizeUrl);
  */
 @SuppressWarnings({ "WeakerAccess", "UnusedReturnValue", "SameParameterValue" })
 public class AuthenticationController {
@@ -45,6 +56,11 @@ public class AuthenticationController {
      * @param clientId     the Auth0 application's client id
      * @param clientSecret the Auth0 application's client secret
      * @return a new Builder instance ready to configure
+     * @example Create a builder with a static domain
+     * AuthenticationController controller = AuthenticationController
+     *     .newBuilder("YOUR_DOMAIN.auth0.com", "YOUR_CLIENT_ID", "YOUR_CLIENT_SECRET")
+     *     .withResponseType("code")
+     *     .build();
      */
     public static Builder newBuilder(String domain, String clientId, String clientSecret) {
         Validate.notNull(domain, "domain must not be null");
@@ -287,6 +303,12 @@ public class AuthenticationController {
          * @throws UnsupportedOperationException if the Implicit Grant is chosen and the
          *                                       environment doesn't support UTF-8
          *                                       encoding.
+         * @example Build the controller with RS256 token verification
+         * JwkProvider jwkProvider = new JwkProviderBuilder("YOUR_DOMAIN.auth0.com").build();
+         * AuthenticationController controller = AuthenticationController
+         *     .newBuilder("YOUR_DOMAIN.auth0.com", "YOUR_CLIENT_ID", "YOUR_CLIENT_SECRET")
+         *     .withJwkProvider(jwkProvider)
+         *     .build();
          */
         public AuthenticationController build() throws UnsupportedOperationException {
             validateDomainConfiguration();
@@ -398,6 +420,14 @@ public class AuthenticationController {
      *                                       invalid authentication request.
      * @throws IdentityVerificationException if an error occurred while verifying
      *                                       the request tokens.
+     * @example Process the callback request and retrieve tokens
+     * try {
+     *     Tokens tokens = controller.handle(request, response);
+     *     String accessToken = tokens.getAccessToken();
+     *     String idToken     = tokens.getIdToken();
+     * } catch (IdentityVerificationException e) {
+     *     // Handle verification failure
+     * }
      */
     public Tokens handle(HttpServletRequest request, HttpServletResponse response)
             throws IdentityVerificationException {
@@ -503,6 +533,13 @@ public class AuthenticationController {
      * @param redirectUri the url to call back with the authentication result.
      * @return the authorize url builder to continue any further parameter
      *         customization.
+     * @example Build and redirect to the authorization URL
+     * String authorizeUrl = controller
+     *     .buildAuthorizeUrl(request, response, "https://your-app.com/callback")
+     *     .withScope("openid profile email")
+     *     .withAudience("https://api.your-app.com")
+     *     .build();
+     * response.sendRedirect(authorizeUrl);
      */
     public AuthorizeUrl buildAuthorizeUrl(HttpServletRequest request, HttpServletResponse response,
             String redirectUri) {

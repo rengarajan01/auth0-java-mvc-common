@@ -14,6 +14,15 @@ import static com.auth0.IdentityVerificationException.API_ERROR;
 /**
  * Class to create and customize an Auth0 Authorize URL.
  * It's not reusable.
+ *
+ * @example Customize and build the authorization URL
+ * String url = controller
+ *     .buildAuthorizeUrl(request, response, "https://your-app.com/callback")
+ *     .withConnection("google-oauth2")
+ *     .withScope("openid profile email")
+ *     .withAudience("https://api.your-app.com")
+ *     .build();
+ * response.sendRedirect(url);
  */
 @SuppressWarnings({"UnusedReturnValue", "WeakerAccess", "unused", "SameParameterValue"})
 public class AuthorizeUrl {
@@ -216,6 +225,12 @@ public class AuthorizeUrl {
      *
      * @return the string URL
      * @throws IllegalStateException if it's called more than once
+     * @example Build the final authorization URL
+     * String authorizeUrl = controller
+     *     .buildAuthorizeUrl(request, response, "https://your-app.com/callback")
+     *     .withScope("openid profile email")
+     *     .build();
+     * response.sendRedirect(authorizeUrl);
      */
     public String build() throws IllegalStateException {
         storeTransient();
@@ -231,6 +246,11 @@ public class AuthorizeUrl {
      * @return the authorize URL as a string.
      * @throws InvalidRequestException if there is an error when making the request.
      * @see <a href="https://www.rfc-editor.org/rfc/rfc9126.html">RFC 9126</a>
+     * @example Use Pushed Authorization Requests (PAR)
+     * String authorizeUrl = controller
+     *     .buildAuthorizeUrl(request, response, "https://your-app.com/callback")
+     *     .fromPushedAuthorizationRequest();
+     * response.sendRedirect(authorizeUrl);
      */
     public String fromPushedAuthorizationRequest() throws InvalidRequestException {
         storeTransient();

@@ -11,6 +11,13 @@ import java.io.Serializable;
  * <li><i>type</i>: Token Type</li>
  * <li><i>expiresIn</i>: Token expiration</li>
  * </ul>
+ *
+ * @example Inspect tokens after a successful authentication
+ * Tokens tokens = controller.handle(request, response);
+ * String accessToken  = tokens.getAccessToken();
+ * String idToken      = tokens.getIdToken();
+ * String refreshToken = tokens.getRefreshToken();
+ * Long   expiresIn    = tokens.getExpiresIn();
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Tokens implements Serializable {

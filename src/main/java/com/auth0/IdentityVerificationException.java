@@ -1,5 +1,21 @@
 package com.auth0;
 
+/**
+ * Thrown when an error occurs while verifying the identity tokens returned
+ * by Auth0 during authentication. This is the base exception for all
+ * authentication errors in this SDK.
+ *
+ * @example Handle identity verification errors
+ * try {
+ *     Tokens tokens = controller.handle(request, response);
+ * } catch (IdentityVerificationException e) {
+ *     if (e.isAPIError()) {
+ *         // Auth0 API returned an error response
+ *     } else if (e.isJWTError()) {
+ *         // Token signature or claims validation failed
+ *     }
+ * }
+ */
 @SuppressWarnings("WeakerAccess")
 public class IdentityVerificationException extends Exception {
 

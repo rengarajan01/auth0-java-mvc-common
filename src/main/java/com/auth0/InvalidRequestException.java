@@ -1,7 +1,18 @@
 package com.auth0;
 
 /**
- * Represents an error occurred while executing a request against the Auth0 Authentication API
+ * Represents an error occurred while executing a request against the Auth0 Authentication API.
+ * Extends {@link IdentityVerificationException} and is thrown for OAuth protocol errors,
+ * invalid state parameters, or missing required tokens.
+ *
+ * @example Handle an invalid request exception
+ * try {
+ *     Tokens tokens = controller.handle(request, response);
+ * } catch (InvalidRequestException e) {
+ *     // OAuth error or invalid/missing request parameters
+ *     String errorCode = e.getCode();
+ *     String message   = e.getMessage();
+ * }
  */
 @SuppressWarnings("WeakerAccess")
 public class InvalidRequestException extends IdentityVerificationException {
